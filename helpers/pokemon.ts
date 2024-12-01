@@ -1,0 +1,1 @@
+export const formatPokemonId = (id: number | string) => String(id).padStart(4,'0');
