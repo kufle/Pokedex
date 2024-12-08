@@ -1,18 +1,18 @@
 import { gql, useQuery } from "@apollo/client";
 import PokemonCard from "@/components/pokemon-card";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import { useState } from "react";
+import { ActivityIndicator, FlatList, Text, TextInput, View } from "react-native";
+import { useEffect, useState } from "react";
 
 const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
 
 const query = gql`
-  query Pokemons($offset: Int!, $limit: Int!) {
+  query Pokemons($name: String!, $offset: Int!, $limit: Int!) {
     pokemon_v2_pokemonspecies(
       order_by: { id: asc }
       offset: $offset
       where: {
-        name: { _ilike: "%${INITIAL_FILTER.name}%" }
+        name: { _ilike: $name }
         ${INITIAL_FILTER.generationId ? `generation_id: { _eq: ${INITIAL_FILTER.generationId} }` : ''}
         ${
           INITIAL_FILTER.typeId
@@ -39,9 +39,25 @@ export default function Index() {
   const [offset, setOffset] = useState(0);
   const [pokemons, setPokemons] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  const [searchText, setSearchText] = useState('');
+  const [debouncedSearchText, setDebouncedSearchText] = useState('');
+
+  // Debounce logic
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+      setOffset(0); // Reset offset setiap kali search berubah
+      setPokemons([]); // Clear current data
+      setHasMore(true); // Reset pagination
+    }, 500); // 500ms debounce time
+
+    return () => {
+      clearTimeout(handler); // Clear timeout jika user mengetik sebelum 500ms
+    };
+  }, [searchText]);
 
   const {loading, data, error, fetchMore} = useQuery(query, {
-    variables: {offset: offset, limit: LIMIT},
+    variables: {name: `%${debouncedSearchText}%`, offset: offset, limit: LIMIT},
     onCompleted: (data) => {
       console.log("Di fetch")
       console.log(data)
@@ -52,7 +68,7 @@ export default function Index() {
   const loadMoreData = () => {
     if (!loading) {
       fetchMore({
-        variables: {offset: offset + LIMIT, limit: LIMIT},
+        variables: {name: `%${debouncedSearchText}%`, offset: offset + LIMIT, limit: LIMIT},
         updateQuery: (prevResult, { fetchMoreResult}) => {
           console.log("refetch")
           if (!fetchMoreResult) return prevResult;
@@ -72,15 +88,34 @@ export default function Index() {
   }
   
   return (
-    <View style={{ flex: 1, paddingHorizontal: 16, flexDirection: "column"}}>
+    <View style={{ flex: 1, paddingHorizontal: 16, flexDirection: "column", backgroundColor: "#FFFFFF"}}>
+      <View style={{paddingTop: 15}}>
+        <Text style={{fontSize: 28, fontFamily: "poppinsBold"}}>Pokédex</Text>
+        <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name.</Text>
+        <View style={{ marginBottom: 15 }}>
+        <TextInput
+          placeholder="Search Pokémon"
+          value={searchText}
+          onChangeText={(text) => setSearchText(text)}
+          style={{
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 8,
+            paddingHorizontal: 10,
+            paddingVertical: 8,
+            fontSize: 16,
+          }}
+        />
+      </View>
+      </View>
       <FlatList
         numColumns={2}
         showsVerticalScrollIndicator={false}
         data={pokemons}
         contentContainerStyle={{gap: 15, paddingVertical: 12}}
         columnWrapperStyle={{flex: 0.5, justifyContent: "space-between"}}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => <PokemonCard key={item.id} {...item}/>
+        keyExtractor={(item, index) => `${item.id}-index-${index}`}
+        renderItem={({item}) => <PokemonCard {...item}/>
         }
         onEndReached={loadMoreData}
         ListFooterComponent={

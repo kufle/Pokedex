@@ -1,8 +1,10 @@
 import { formatPokemonId } from '@/helpers/pokemon';
-import { colors } from '@/utils/colors';
+import { colors, colorsTag } from '@/utils/colors';
 import { snakeCaseToTitleCase } from '@/utils/string'
 import React from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import ImgPokeball from '@/assets/images/pokeball.png';
+import Tag from './tag';
 
 interface Props {
     id: string;
@@ -29,15 +31,25 @@ const PokemonCard = ({id, name, pokemon_v2_pokemons}: Props) => {
             <Text style={styles.pokemonId}>#{formatPokemonId(id)}</Text>
             <Text style={styles.pokemonName}>{snakeCaseToTitleCase(name)}</Text>
             <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 8}}>
-                <Image
-                    src={`${PNG_IMAGE_URL}/${id}.png`}
-                    style={{ height: 100, width: 100 }}
+                <ImageBackground
                     resizeMode="contain"
-                />
+                    style={{width: 100, height: 100}}
+                    source={ImgPokeball}
+                >
+                    <Image
+                        src={`${PNG_IMAGE_URL}/${id}.png`}
+                        style={{ height: 100, width: 100 }}
+                        resizeMode="contain"
+                    />
+                </ImageBackground>
             </View>
             <View>
                 <Text style={styles.pokemonTypeTitle}>Type:</Text>
-                <Text style={styles.pokemonType}>{pokemonType.join(', ')}</Text>
+                <View style={styles.row}>
+                    {pokemonType.map((pokeType) => (
+                        <Tag key={pokeType} pokeType={pokeType}/>
+                    ))}
+                </View>
             </View>
         </View>
     )
@@ -65,26 +77,29 @@ const createDynamicStyles = (type: ColorType) => {
         },
         pokemonName: {
             textAlign: "center",
-            fontSize: 22, 
+            fontSize: 18, 
             fontWeight: '600',
-            color: '#FFFFFF'
+            color: '#FFFFFF',
+            fontFamily: "poppinsBold",
         },
         pokemonId: {
             fontSize: 14,
             color: '#FFFFFF',
-            textAlign: 'right'
+            textAlign: 'right',
+            fontWeight: "bold",
+            fontFamily: "poppinsMedium",
         },
         pokemonTypeTitle: {
             textAlign: "center",
             fontSize: 14,
             color: '#FFFFFF',
-            fontWeight: "bold"
+            fontWeight: "bold",
+            fontFamily: "poppinsMedium",
         },
-        pokemonType: {
-            textAlign: "center",
-            fontSize: 14,
-            textTransform: "capitalize",
-            color: '#FFFFFF'
+        row: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
         }
     });
 }
