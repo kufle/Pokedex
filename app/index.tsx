@@ -1,7 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
 import PokemonCard from "@/components/pokemon-card";
-import { ActivityIndicator, FlatList, Text, TextInput, View } from "react-native";
-import { useEffect, useState } from "react";
+import { ActivityIndicator, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
@@ -41,6 +44,57 @@ export default function Index() {
   const [hasMore, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
+
+  // START
+  const sheetRef = useRef<BottomSheet>(null);
+  const korong = useMemo(
+    () =>
+      Array(50)
+        .fill(0)
+        .map((_, index) => `index-${index}`),
+    []
+  );
+  const snapPoints = useMemo(() => ["30%"], []);
+
+  // callbacks
+  const handleSheetChange = useCallback((index) => {
+    console.log("handleSheetChange", index);
+  }, []);
+  const handleSnapPress = useCallback((index) => {
+    sheetRef.current?.snapToIndex(index);
+  }, []);
+  const handleClosePress = useCallback(() => {
+    sheetRef.current?.close();
+  }, []);
+
+  // render
+  
+
+  // renders
+	const renderBackdrop = useCallback(
+		(props) => (
+			<BottomSheetBackdrop
+				{...props}
+				disappearsOnIndex={-1}
+				appearsOnIndex={0}
+			/>
+		),
+		[]
+	);
+
+  const renderItem = useCallback(
+    (item) => (
+      <View key={item} style={styles.itemContainer}>
+        <Text>{item}</Text>
+      </View>
+    ),
+    []
+  );
+
+  const handleCloseSheet = () => {
+    sheetRef.current?.close();
+};
+  // END
 
   // Debounce logic
   useEffect(() => {
@@ -88,31 +142,24 @@ export default function Index() {
   }
   
   return (
+    <GestureHandlerRootView>
     <View style={{ flex: 1, paddingHorizontal: 16, flexDirection: "column", backgroundColor: "#FFFFFF"}}>
-      <View style={{paddingTop: 15}}>
+      <View style={{paddingVertical: 15}}>
         <Text style={{fontSize: 28, fontFamily: "poppinsBold"}}>Pokédex</Text>
         <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name.</Text>
-        <View style={{ marginBottom: 15 }}>
-        <TextInput
-          placeholder="Search Pokémon"
-          value={searchText}
-          onChangeText={(text) => setSearchText(text)}
-          style={{
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 8,
-            paddingHorizontal: 10,
-            paddingVertical: 8,
-            fontSize: 16,
-          }}
-        />
-      </View>
+        
+        <View style={{flexDirection: "row", alignItems: "center", padding: 2, backgroundColor: "#f2f2f2", borderRadius: 10}}>
+          <Ionicons name="search-outline" size={24} color="#ccc" style={{paddingHorizontal: 5}} />
+          <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#F2f2f2", borderRadius: 10, fontFamily: "poppins"}} onChangeText={(text) => setSearchText(text)} value={searchText} />
+        </View>
+        <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
+       {/*  */}
       </View>
       <FlatList
         numColumns={2}
         showsVerticalScrollIndicator={false}
         data={pokemons}
-        contentContainerStyle={{gap: 15, paddingVertical: 12}}
+        contentContainerStyle={{gap: 15, paddingBottom: 12}}
         columnWrapperStyle={{flex: 0.5, justifyContent: "space-between"}}
         keyExtractor={(item, index) => `${item.id}-index-${index}`}
         renderItem={({item}) => <PokemonCard {...item}/>
@@ -122,6 +169,32 @@ export default function Index() {
           hasMore ? <ActivityIndicator /> : <Text>No more data</Text>
         }
       />
+
+      <BottomSheet
+        ref={sheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        enableDynamicSizing={false}
+        enablePanDownToClose={true}
+        onChange={handleSheetChange}
+        backdropComponent={renderBackdrop}
+      >
+        <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
+          {korong.map(renderItem)}
+        </BottomSheetScrollView>
+      </BottomSheet>
     </View>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    backgroundColor: "white",
+  },
+  itemContainer: {
+    padding: 6,
+    margin: 6,
+    backgroundColor: "#eee",
+  },
+});
