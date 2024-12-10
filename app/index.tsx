@@ -3,7 +3,7 @@ import PokemonCard from "@/components/pokemon-card";
 import { ActivityIndicator, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const LIMIT = 6;
@@ -49,12 +49,20 @@ export default function Index() {
   const sheetRef = useRef<BottomSheet>(null);
   const korong = useMemo(
     () =>
-      Array(50)
-        .fill(0)
-        .map((_, index) => `index-${index}`),
+      [
+        { id: 1, name: "Gen I", select: false },
+        { id: 2, name: "Gen II", select: false },
+        { id: 3, name: "Gen III", select: false },
+        { id: 4, name: "Gen IV", select: false },
+        { id: 5, name: "Gen V", select: false },
+        { id: 6, name: "Gen VI", select: false },
+        { id: 7, name: "Gen VII", select: false },
+        { id: 8, name: "Gen VIII", select: false },
+        { id: 9, name: "Gen IX", select: false },
+      ],
     []
   );
-  const snapPoints = useMemo(() => ["30%"], []);
+  const snapPoints = useMemo(() => ["40%"], []);
 
   // callbacks
   const handleSheetChange = useCallback((index) => {
@@ -83,11 +91,12 @@ export default function Index() {
 	);
 
   const renderItem = useCallback(
-    (item) => (
-      <View key={item} style={styles.itemContainer}>
-        <Text>{item}</Text>
-      </View>
-    ),
+    ({item}) => {
+      console.log(typeof item)
+      return (<View style={{paddingHorizontal: 20, paddingVertical: 10}}>
+        <Text>{item.name}</Text>
+      </View>)
+    },
     []
   );
 
@@ -152,6 +161,9 @@ export default function Index() {
           <Ionicons name="search-outline" size={24} color="#ccc" style={{paddingHorizontal: 5}} />
           <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#F2f2f2", borderRadius: 10, fontFamily: "poppins"}} onChangeText={(text) => setSearchText(text)} value={searchText} />
         </View>
+        <View>
+          
+        </View>
         <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
        {/*  */}
       </View>
@@ -162,8 +174,7 @@ export default function Index() {
         contentContainerStyle={{gap: 15, paddingBottom: 12}}
         columnWrapperStyle={{flex: 0.5, justifyContent: "space-between"}}
         keyExtractor={(item, index) => `${item.id}-index-${index}`}
-        renderItem={({item}) => <PokemonCard {...item}/>
-        }
+        renderItem={({item}) => <PokemonCard {...item}/> }
         onEndReached={loadMoreData}
         ListFooterComponent={
           hasMore ? <ActivityIndicator /> : <Text>No more data</Text>
@@ -172,16 +183,21 @@ export default function Index() {
 
       <BottomSheet
         ref={sheetRef}
-        index={0}
+        index={-1}
         snapPoints={snapPoints}
         enableDynamicSizing={false}
         enablePanDownToClose={true}
         onChange={handleSheetChange}
         backdropComponent={renderBackdrop}
       >
-        <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
-          {korong.map(renderItem)}
-        </BottomSheetScrollView>
+        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
+          <Text>Filter Generation</Text>
+          <Text>Apply</Text>
+        </View>
+        <BottomSheetFlatList
+          data={korong}
+          renderItem={renderItem}
+        />
       </BottomSheet>
     </View>
     </GestureHandlerRootView>
