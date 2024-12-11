@@ -1,10 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
 import PokemonCard from "@/components/pokemon-card";
-import { ActivityIndicator, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { Ionicons } from "@expo/vector-icons";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Filter from "@/components/filter";
 
 const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
@@ -47,7 +48,7 @@ export default function Index() {
 
   // START
   const sheetRef = useRef<BottomSheet>(null);
-  const korong = useMemo(
+  const generations = useMemo(
     () =>
       [
         { id: 1, name: "Gen I", select: false },
@@ -92,9 +93,8 @@ export default function Index() {
 
   const renderItem = useCallback(
     ({item}) => {
-      console.log(typeof item)
       return (<View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-        <Text>{item.name}</Text>
+        <Text style={{fontFamily: "poppins"}}>{item.name}</Text>
       </View>)
     },
     []
@@ -153,18 +153,18 @@ export default function Index() {
   return (
     <GestureHandlerRootView>
     <View style={{ flex: 1, paddingHorizontal: 16, flexDirection: "column", backgroundColor: "#FFFFFF"}}>
-      <View style={{paddingVertical: 15}}>
+      <View style={{paddingBottom: 15}}>
         <Text style={{fontSize: 28, fontFamily: "poppinsBold"}}>Pokédex</Text>
         <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name.</Text>
         
         <View style={{flexDirection: "row", alignItems: "center", padding: 2, backgroundColor: "#f2f2f2", borderRadius: 10}}>
           <Ionicons name="search-outline" size={24} color="#ccc" style={{paddingHorizontal: 5}} />
-          <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#F2f2f2", borderRadius: 10, fontFamily: "poppins"}} onChangeText={(text) => setSearchText(text)} value={searchText} />
+          <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 10, fontFamily: "poppins"}} onChangeText={(text) => setSearchText(text)} value={searchText} />
         </View>
-        <View>
-          
+        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10, gap: 10}}>
+          <Filter text="Any Generations" handlePress={() => handleSnapPress(0)} />
+          <Filter text="Any Types"  handlePress={() => handleSnapPress(0)}/>
         </View>
-        <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
        {/*  */}
       </View>
       <FlatList
@@ -191,11 +191,11 @@ export default function Index() {
         backdropComponent={renderBackdrop}
       >
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
-          <Text>Filter Generation</Text>
+          <Text style={{fontFamily: "poppins"}}>Filter Generation</Text>
           <Text>Apply</Text>
         </View>
         <BottomSheetFlatList
-          data={korong}
+          data={generations}
           renderItem={renderItem}
         />
       </BottomSheet>

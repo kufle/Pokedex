@@ -44,7 +44,7 @@ const PokemonCard = ({id, name, pokemon_v2_pokemons}: Props) => {
                 </ImageBackground>
             </View>
             <View>
-                <Text style={styles.pokemonTypeTitle}>Type:</Text>
+                <Text style={styles.pokemonTypeTitle}>{pokemonType.length > 1 ? "Types:" : "Type:"}</Text>
                 <View style={styles.row}>
                     {pokemonType.map((pokeType) => (
                         <Tag key={pokeType} pokeType={pokeType}/>
