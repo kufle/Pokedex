@@ -6,6 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Filter from "@/components/filter";
+import BottomSheetList from "@/components/bottom-sheetlist";
+import useBottomListSheet from "@/hooks/useBottomListSheet";
+import { generations } from "@/data/generations";
+import { pokemonTypes } from "@/data/pokemon-types";
 
 const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
@@ -45,39 +49,12 @@ export default function Index() {
   const [hasMore, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
+  const [currentFilterData, setCurrentFilterData] = useState([]);
 
   // START
-  const sheetRef = useRef<BottomSheet>(null);
-  const generations = useMemo(
-    () =>
-      [
-        { id: 1, name: "Gen I", select: false },
-        { id: 2, name: "Gen II", select: false },
-        { id: 3, name: "Gen III", select: false },
-        { id: 4, name: "Gen IV", select: false },
-        { id: 5, name: "Gen V", select: false },
-        { id: 6, name: "Gen VI", select: false },
-        { id: 7, name: "Gen VII", select: false },
-        { id: 8, name: "Gen VIII", select: false },
-        { id: 9, name: "Gen IX", select: false },
-      ],
-    []
-  );
-  const snapPoints = useMemo(() => ["40%"], []);
-
-  // callbacks
-  const handleSheetChange = useCallback((index) => {
-    console.log("handleSheetChange", index);
-  }, []);
-  const handleSnapPress = useCallback((index) => {
-    sheetRef.current?.snapToIndex(index);
-  }, []);
-  const handleClosePress = useCallback(() => {
-    sheetRef.current?.close();
-  }, []);
 
   // render
-  
+  const {sheetRef, handleSnapPress} = useBottomListSheet();
 
   // renders
 	const renderBackdrop = useCallback(
@@ -91,18 +68,7 @@ export default function Index() {
 		[]
 	);
 
-  const renderItem = useCallback(
-    ({item}) => {
-      return (<View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-        <Text style={{fontFamily: "poppins"}}>{item.name}</Text>
-      </View>)
-    },
-    []
-  );
-
-  const handleCloseSheet = () => {
-    sheetRef.current?.close();
-};
+  const snapPoints = useMemo(() => ["40%"], []);
   // END
 
   // Debounce logic
@@ -149,6 +115,15 @@ export default function Index() {
       setOffset((prevOffset) => prevOffset + LIMIT);
     }
   }
+
+  const handleFilterPress = (filterType: string) => {
+    if (filterType === "generations") {
+      setCurrentFilterData(generations);
+    } else if (filterType === "types") {
+      setCurrentFilterData(pokemonTypes);
+    }
+    handleSnapPress(0);
+  }
   
   return (
     <GestureHandlerRootView>
@@ -162,8 +137,8 @@ export default function Index() {
           <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 10, fontFamily: "poppins"}} onChangeText={(text) => setSearchText(text)} value={searchText} />
         </View>
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10, gap: 10}}>
-          <Filter text="Any Generations" handlePress={() => handleSnapPress(0)} />
-          <Filter text="Any Types"  handlePress={() => handleSnapPress(0)}/>
+          <Filter text="Any Generations" handlePress={() => handleFilterPress("generations")} />
+          <Filter text="Any Types"  handlePress={() => handleFilterPress("types")}/>
         </View>
        {/*  */}
       </View>
@@ -187,17 +162,13 @@ export default function Index() {
         snapPoints={snapPoints}
         enableDynamicSizing={false}
         enablePanDownToClose={true}
-        onChange={handleSheetChange}
         backdropComponent={renderBackdrop}
       >
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
-          <Text style={{fontFamily: "poppins"}}>Filter Generation</Text>
-          <Text>Apply</Text>
+          <Text style={{fontFamily: "poppinsBold"}}>Filter Generation</Text>
+          <Text style={{fontFamily: "poppinsBold"}}>Apply</Text>
         </View>
-        <BottomSheetFlatList
-          data={generations}
-          renderItem={renderItem}
-        />
+        <BottomSheetList data={currentFilterData} />
       </BottomSheet>
     </View>
     </GestureHandlerRootView>
