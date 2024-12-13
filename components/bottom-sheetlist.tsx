@@ -2,7 +2,7 @@ import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
 import React, { useCallback, useMemo } from 'react'
 import { Text, View } from 'react-native';
 
-function BottomSheetList({data}) {
+const BottomSheetList = React.memo(({ data }) => {
     const datafilter = useMemo(() => data, [data]);
 
     const renderItem = useCallback(
@@ -22,6 +22,6 @@ function BottomSheetList({data}) {
             renderItem={renderItem}
         />
     )
-}
+});
 
 export default BottomSheetList

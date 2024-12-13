@@ -49,6 +49,7 @@ export default function Index() {
   const [hasMore, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
+  const [currentFilter, setCurrentFilter] = useState("");
   const [currentFilterData, setCurrentFilterData] = useState([]);
 
   // START
@@ -69,6 +70,9 @@ export default function Index() {
 	);
 
   const snapPoints = useMemo(() => ["40%"], []);
+
+  const memoizedFilterData = useMemo(() => currentFilterData, [currentFilterData]);
+  const memoizedCurrentFilter = useMemo(() => currentFilter, [currentFilter]);
   // END
 
   // Debounce logic
@@ -118,8 +122,10 @@ export default function Index() {
 
   const handleFilterPress = (filterType: string) => {
     if (filterType === "generations") {
+      setCurrentFilter("generations");
       setCurrentFilterData(generations);
     } else if (filterType === "types") {
+      setCurrentFilter("types");
       setCurrentFilterData(pokemonTypes);
     }
     handleSnapPress(0);
@@ -165,10 +171,10 @@ export default function Index() {
         backdropComponent={renderBackdrop}
       >
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
-          <Text style={{fontFamily: "poppinsBold"}}>Filter Generation</Text>
+          <Text style={{fontFamily: "poppinsBold"}}>Filter {memoizedCurrentFilter}</Text>
           <Text style={{fontFamily: "poppinsBold"}}>Apply</Text>
         </View>
-        <BottomSheetList data={currentFilterData} />
+        <BottomSheetList data={memoizedFilterData} />
       </BottomSheet>
     </View>
     </GestureHandlerRootView>
