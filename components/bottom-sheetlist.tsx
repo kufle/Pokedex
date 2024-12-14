@@ -1,16 +1,20 @@
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
 import React, { useCallback, useMemo } from 'react'
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-const BottomSheetList = React.memo(({ data }) => {
+const BottomSheetList = React.memo(({ data, handleFilterSelected, filterType }) => {
     const datafilter = useMemo(() => data, [data]);
-
+    console.log("filtertype", filterType)
+    const handlePress = (pressItem) => {
+        handleFilterSelected(filterType, pressItem);
+    }
     const renderItem = useCallback(
         ({item}) => {
+            
             return (
-                <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
+                <TouchableOpacity style={{paddingHorizontal: 20, paddingVertical: 10}} onPress={() => handlePress(item.name)}>
                     <Text style={{fontFamily: "poppins"}}>{item.name}</Text>
-                </View>
+                </TouchableOpacity>
             )
         },
         []

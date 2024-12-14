@@ -51,7 +51,7 @@ export default function Index() {
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
   const [currentFilter, setCurrentFilter] = useState("");
   const [currentFilterData, setCurrentFilterData] = useState([]);
-
+  const [selectedGeneration, setSelectedGeneration] = useState([]);
   // START
 
   // render
@@ -72,7 +72,7 @@ export default function Index() {
   const snapPoints = useMemo(() => ["40%"], []);
 
   const memoizedFilterData = useMemo(() => currentFilterData, [currentFilterData]);
-  const memoizedCurrentFilter = useMemo(() => currentFilter, [currentFilter]);
+  // const memoizedCurrentFilter = useMemo(() => currentFilter, [currentFilter]);
   // END
 
   // Debounce logic
@@ -93,7 +93,7 @@ export default function Index() {
     variables: {name: `%${debouncedSearchText}%`, offset: offset, limit: LIMIT},
     onCompleted: (data) => {
       console.log("Di fetch")
-      console.log(data)
+      //console.log(data)
       setPokemons((prev) => [...prev, ...data.pokemon_v2_pokemonspecies]);
     }
   });
@@ -130,13 +130,26 @@ export default function Index() {
     }
     handleSnapPress(0);
   }
+
+  const handleFilterSelected = (filterType, item) => {
+    console.log(filterType)
+    if (filterType === "generations") {
+      setSelectedGeneration((prev) => {
+        if (prev.includes(item)) {
+          return prev; // Tidak menambahkan jika sudah ada
+        }
+        return [...prev, item]
+      })
+    }
+    console.log("selectedGeneration", item)
+  }
   
   return (
     <GestureHandlerRootView>
     <View style={{ flex: 1, paddingHorizontal: 16, flexDirection: "column", backgroundColor: "#FFFFFF"}}>
       <View style={{paddingBottom: 15}}>
         <Text style={{fontSize: 28, fontFamily: "poppinsBold"}}>Pokédex</Text>
-        <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name.</Text>
+        <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name. {selectedGeneration}</Text>
         
         <View style={{flexDirection: "row", alignItems: "center", padding: 2, backgroundColor: "#f2f2f2", borderRadius: 10}}>
           <Ionicons name="search-outline" size={24} color="#ccc" style={{paddingHorizontal: 5}} />
@@ -169,25 +182,15 @@ export default function Index() {
         enableDynamicSizing={false}
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
+        animateOnMount={false}
       >
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
-          <Text style={{fontFamily: "poppinsBold"}}>Filter {memoizedCurrentFilter}</Text>
+          <Text style={{fontFamily: "poppinsBold"}}>Filter {currentFilter}</Text>
           <Text style={{fontFamily: "poppinsBold"}}>Apply</Text>
         </View>
-        <BottomSheetList data={memoizedFilterData} />
+        <BottomSheetList data={memoizedFilterData} handleFilterSelected={handleFilterSelected} filterType={currentFilter} />
       </BottomSheet>
     </View>
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  contentContainer: {
-    backgroundColor: "white",
-  },
-  itemContainer: {
-    padding: 6,
-    margin: 6,
-    backgroundColor: "#eee",
-  },
-});
