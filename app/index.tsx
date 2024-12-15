@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import PokemonCard from "@/components/pokemon-card";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from "@gorhom/bottom-sheet";
@@ -14,34 +14,37 @@ import { pokemonTypes } from "@/data/pokemon-types";
 const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
 
-const query = gql`
-  query Pokemons($name: String!, $offset: Int!, $limit: Int!) {
-    pokemon_v2_pokemonspecies(
-      order_by: { id: asc }
-      offset: $offset
-      where: {
-        name: { _ilike: $name }
-        ${INITIAL_FILTER.generationId ? `generation_id: { _eq: ${INITIAL_FILTER.generationId} }` : ''}
-        ${
-          INITIAL_FILTER.typeId
-            ? `pokemon_v2_pokemons: { pokemon_v2_pokemontypes: { type_id: { _eq: ${INITIAL_FILTER.typeId} } } }`
-            : ''
+const buildQuery = (appliedFilter) => {
+  console.log(appliedFilter)
+  return gql`
+    query Pokemons($name: String!, $offset: Int!, $limit: Int!, $generationId: [Int], $typeId: [Int]) {
+      pokemon_v2_pokemonspecies(
+        order_by: { id: asc }
+        offset: $offset
+        where: {
+          name: { _ilike: $name },
+          ${appliedFilter.generationId && appliedFilter.generationId.length > 0 ? `generation_id: { _in: $generationId },` : ''}
+          ${
+            appliedFilter.typeId && appliedFilter.typeId.length > 0
+              ? `pokemon_v2_pokemons: { pokemon_v2_pokemontypes: { type_id: { _in: $typeId } } }`
+              : ''
+          }
         }
-      }
-      limit: $limit
-    ) {
-      id
-      name
-      pokemon_v2_pokemons {
-        pokemon_v2_pokemontypes {
-          pokemon_v2_type {
-            name
+        limit: $limit
+      ) {
+        id
+        name
+        pokemon_v2_pokemons {
+          pokemon_v2_pokemontypes {
+            pokemon_v2_type {
+              name
+            }
           }
         }
       }
     }
-  }
-`
+  `
+}
 
 export default function Index() {
   const [offset, setOffset] = useState(0);
@@ -52,6 +55,11 @@ export default function Index() {
   const [currentFilter, setCurrentFilter] = useState("");
   const [currentFilterData, setCurrentFilterData] = useState([]);
   const [selectedGeneration, setSelectedGeneration] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [appliedFilter, setAppliedFilter] = useState({
+    generationId: [],
+    typeId: []
+  });
   // START
 
   // render
@@ -89,8 +97,15 @@ export default function Index() {
     };
   }, [searchText]);
 
-  const {loading, data, error, fetchMore} = useQuery(query, {
-    variables: {name: `%${debouncedSearchText}%`, offset: offset, limit: LIMIT},
+  useEffect(() => {
+    setDebouncedSearchText(searchText);
+    setOffset(0); // Reset offset setiap kali search berubah
+    setPokemons([]); // Clear current data
+    setHasMore(true); // Reset pagination
+  }, [appliedFilter])
+
+  const {loading, data, error, fetchMore} = useQuery(buildQuery(appliedFilter), {
+    variables: {name: `%${debouncedSearchText}%`, offset: offset, limit: LIMIT, generationId: appliedFilter.generationId, typeId: appliedFilter.typeId},
     onCompleted: (data) => {
       console.log("Di fetch")
       //console.log(data)
@@ -99,9 +114,9 @@ export default function Index() {
   });
 
   const loadMoreData = () => {
-    if (!loading) {
+    if (!loading && hasMore) {
       fetchMore({
-        variables: {name: `%${debouncedSearchText}%`, offset: offset + LIMIT, limit: LIMIT},
+        variables: {name: `%${debouncedSearchText}%`, offset: offset + LIMIT, limit: LIMIT, generationId: appliedFilter.generationId, typeId: appliedFilter.typeId},
         updateQuery: (prevResult, { fetchMoreResult}) => {
           console.log("refetch")
           if (!fetchMoreResult) return prevResult;
@@ -124,24 +139,22 @@ export default function Index() {
     if (filterType === "generations") {
       setCurrentFilter("generations");
       setCurrentFilterData(generations);
+      
     } else if (filterType === "types") {
       setCurrentFilter("types");
       setCurrentFilterData(pokemonTypes);
     }
+    //console.log(currentFilter)
     handleSnapPress(0);
   }
 
-  const handleFilterSelected = (filterType, item) => {
-    console.log(filterType)
-    if (filterType === "generations") {
-      setSelectedGeneration((prev) => {
-        if (prev.includes(item)) {
-          return prev; // Tidak menambahkan jika sudah ada
-        }
-        return [...prev, item]
-      })
-    }
-    console.log("selectedGeneration", item)
+  const handleApplyFilters = () => {
+    console.log(selectedTypes)
+    setAppliedFilter({
+      generationId: selectedGeneration.length > 0 ? selectedGeneration.map((item) => item.id) : [],
+      typeId: selectedTypes.length > 0 ? selectedTypes.map((item) => item.id) : [],
+    })
+    sheetRef.current?.close();
   }
   
   return (
@@ -149,15 +162,14 @@ export default function Index() {
     <View style={{ flex: 1, paddingHorizontal: 16, flexDirection: "column", backgroundColor: "#FFFFFF"}}>
       <View style={{paddingBottom: 15}}>
         <Text style={{fontSize: 28, fontFamily: "poppinsBold"}}>Pokédex</Text>
-        <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name. {selectedGeneration}</Text>
-        
+        <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name.</Text>
         <View style={{flexDirection: "row", alignItems: "center", padding: 2, backgroundColor: "#f2f2f2", borderRadius: 10}}>
           <Ionicons name="search-outline" size={24} color="#ccc" style={{paddingHorizontal: 5}} />
           <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 10, fontFamily: "poppins"}} onChangeText={(text) => setSearchText(text)} value={searchText} />
         </View>
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10, gap: 10}}>
-          <Filter text="Any Generations" handlePress={() => handleFilterPress("generations")} />
-          <Filter text="Any Types"  handlePress={() => handleFilterPress("types")}/>
+          <Filter text={appliedFilter.generationId.length > 0 ? selectedGeneration.map(item => item.name).join(", ") : "All generations"} handlePress={() => handleFilterPress("generations")} />
+          <Filter text={appliedFilter.typeId.length > 0 ? selectedTypes.map(item => item.name).join(" ,") : "All Types"}  handlePress={() => handleFilterPress("types")}/>
         </View>
        {/*  */}
       </View>
@@ -186,9 +198,19 @@ export default function Index() {
       >
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
           <Text style={{fontFamily: "poppinsBold"}}>Filter {currentFilter}</Text>
-          <Text style={{fontFamily: "poppinsBold"}}>Apply</Text>
+          <TouchableOpacity onPress={handleApplyFilters}>
+            <Text style={{fontFamily: "poppinsBold", textAlign: "right"}}>Apply</Text>
+          </TouchableOpacity>
         </View>
-        <BottomSheetList data={memoizedFilterData} handleFilterSelected={handleFilterSelected} filterType={currentFilter} />
+        <BottomSheetList 
+          key={currentFilter}
+          data={memoizedFilterData} 
+          filterType={currentFilter}
+          selectedGeneration={selectedGeneration}
+          setSelectedGeneration={setSelectedGeneration}
+          selectedTypes={selectedTypes}
+          setSelectedTypes={setSelectedTypes}
+        />
       </BottomSheet>
     </View>
     </GestureHandlerRootView>
