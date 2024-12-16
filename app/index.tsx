@@ -1,20 +1,21 @@
 import { gql, useQuery } from "@apollo/client";
 import PokemonCard from "@/components/pokemon-card";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Filter from "@/components/filter";
 import BottomSheetList from "@/components/bottom-sheetlist";
 import useBottomListSheet from "@/hooks/useBottomListSheet";
 import { generations } from "@/data/generations";
 import { pokemonTypes } from "@/data/pokemon-types";
+import { GenerationType, PokemonSpecies, TypesType } from "@/types/pokemonTypes";
 
 const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
 
-const buildQuery = (appliedFilter) => {
+const buildQuery = (appliedFilter: AppliedFilterType) => {
   console.log(appliedFilter)
   return gql`
     query Pokemons($name: String!, $offset: Int!, $limit: Int!, $generationId: [Int], $typeId: [Int]) {
@@ -46,17 +47,22 @@ const buildQuery = (appliedFilter) => {
   `
 }
 
+interface AppliedFilterType {
+  generationId: number[];
+  typeId: number[];
+}
+
 export default function Index() {
   const [offset, setOffset] = useState(0);
-  const [pokemons, setPokemons] = useState([]);
+  const [pokemons, setPokemons] = useState<PokemonSpecies[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
   const [currentFilter, setCurrentFilter] = useState("");
-  const [currentFilterData, setCurrentFilterData] = useState([]);
-  const [selectedGeneration, setSelectedGeneration] = useState([]);
-  const [selectedTypes, setSelectedTypes] = useState([]);
-  const [appliedFilter, setAppliedFilter] = useState({
+  const [currentFilterData, setCurrentFilterData] = useState<{ id: number; name: string; }[]>([]);
+  const [selectedGeneration, setSelectedGeneration] = useState<GenerationType[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<TypesType[]>([]);
+  const [appliedFilter, setAppliedFilter] = useState<AppliedFilterType>({
     generationId: [],
     typeId: []
   });
@@ -67,7 +73,7 @@ export default function Index() {
 
   // renders
 	const renderBackdrop = useCallback(
-		(props) => (
+		(props: BottomSheetBackdropProps) => (
 			<BottomSheetBackdrop
 				{...props}
 				disappearsOnIndex={-1}
@@ -79,7 +85,7 @@ export default function Index() {
 
   const snapPoints = useMemo(() => ["40%"], []);
 
-  const memoizedFilterData = useMemo(() => currentFilterData, [currentFilterData]);
+  const memoizedFilterData = useMemo<{ id: number; name: string; }[]>(() => currentFilterData, [currentFilterData]);
   // const memoizedCurrentFilter = useMemo(() => currentFilter, [currentFilter]);
   // END
 
@@ -109,7 +115,11 @@ export default function Index() {
     onCompleted: (data) => {
       console.log("Di fetch")
       //console.log(data)
-      setPokemons((prev) => [...prev, ...data.pokemon_v2_pokemonspecies]);
+      setPokemons((prev) => {
+        const merged = [...prev, ...data.pokemon_v2_pokemonspecies];
+        const unique = Array.from(new Map(merged.map((item) => [item.id, item])).values());
+        return unique;
+      });
     }
   });
 
@@ -123,12 +133,12 @@ export default function Index() {
           if (fetchMoreResult.pokemon_v2_pokemonspecies.length < LIMIT) {
             setHasMore(false);
           }
-          return {
-            pokemon_v2_pokemonspecies: [
-              ...prevResult.pokemon_v2_pokemonspecies,
-              ...fetchMoreResult.pokemon_v2_pokemonspecies,
-            ]
-          }
+          const merged = [
+            ...prevResult.pokemon_v2_pokemonspecies,
+            ...fetchMoreResult.pokemon_v2_pokemonspecies,
+          ];
+          const unique = Array.from(new Map(merged.map((item) => [item.id, item])).values());
+          return { pokemon_v2_pokemonspecies: unique };
         }
       })
       setOffset((prevOffset) => prevOffset + LIMIT);
@@ -179,9 +189,10 @@ export default function Index() {
         data={pokemons}
         contentContainerStyle={{gap: 15, paddingBottom: 12}}
         columnWrapperStyle={{flex: 0.5, justifyContent: "space-between"}}
-        keyExtractor={(item, index) => `${item.id}-index-${index}`}
-        renderItem={({item}) => <PokemonCard {...item}/> }
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({item}) => <PokemonCard id={item.id.toString()} name={item.name} pokemon_v2_pokemons={item.pokemon_v2_pokemons || []} /> }
         onEndReached={loadMoreData}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={
           hasMore ? <ActivityIndicator /> : <Text>No more data</Text>
         }
@@ -197,9 +208,9 @@ export default function Index() {
         animateOnMount={false}
       >
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
-          <Text style={{fontFamily: "poppinsBold"}}>Filter {currentFilter}</Text>
-          <TouchableOpacity onPress={handleApplyFilters}>
-            <Text style={{fontFamily: "poppinsBold", textAlign: "right"}}>Apply</Text>
+          <Text style={{fontFamily: "poppinsBold", textAlign: "left"}}>Filter {currentFilter}</Text>
+          <TouchableOpacity onPress={handleApplyFilters} style={{paddingVertical: 0, paddingHorizontal: 15}}>
+              <Text style={{fontFamily: "poppinsBold", color: "black", textAlign: "right"}}>Apply</Text>
           </TouchableOpacity>
         </View>
         <BottomSheetList 

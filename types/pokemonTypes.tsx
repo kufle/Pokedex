@@ -1,14 +1,27 @@
-interface RootObject {
-    pokemon_v2_pokemon: Pokemonv2pokemon[];
-}
-interface Pokemonv2pokemon {
+type PokemonType = {
+    pokemon_v2_type: {
+      name: string;
+    };
+  };
+  
+  type Pokemon = {
+    pokemon_v2_pokemontypes: PokemonType[];
+  };
+  
+export type PokemonSpecies = {
     id: number;
     name: string;
-    pokemon_v2_pokemontypes: Pokemonv2pokemontype[];
+    pokemon_v2_pokemons: Pokemon[];
+  };
+  
+export type PokemonSpeciesResponse = PokemonSpecies[];
+
+export interface GenerationType {
+    id: number;
+    name: string;
 }
-    interface Pokemonv2pokemontype {
-    pokemon_v2_type: Pokemonv2type;
-}
-interface Pokemonv2type {
+
+export interface TypesType {
+    id: number;
     name: string;
 }

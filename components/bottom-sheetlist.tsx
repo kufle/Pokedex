@@ -1,12 +1,22 @@
+import { GenerationType, TypesType } from '@/types/pokemonTypes';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
 import React, { useCallback, useMemo } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native';
 
-const BottomSheetList = React.memo(({ data, filterType, selectedGeneration, setSelectedGeneration, selectedTypes, setSelectedTypes }) => {
+interface BottomSheetListProps {
+    data: { id: number; name: string }[];  // Tipe untuk data
+    filterType: string;
+    selectedGeneration: GenerationType[];
+    setSelectedGeneration: React.Dispatch<React.SetStateAction<GenerationType[]>>;
+    selectedTypes: TypesType[];
+    setSelectedTypes: React.Dispatch<React.SetStateAction<TypesType[]>>;
+}
+  
+const BottomSheetList = React.memo(({ data, filterType, selectedGeneration, setSelectedGeneration, selectedTypes, setSelectedTypes }: BottomSheetListProps) => {
     const datafilter = useMemo(() => data, [data]);
 
-    const handlePress = useCallback((selectedItem) => {
+    const handlePress = useCallback((selectedItem: { id: number; name: string }) => {
         if (filterType === 'generations') {
             setSelectedGeneration((prev) => {
                 const exists = prev.find((gen) => gen.id === selectedItem.id);
@@ -26,7 +36,7 @@ const BottomSheetList = React.memo(({ data, filterType, selectedGeneration, setS
     }, [filterType, setSelectedGeneration, setSelectedTypes]);
 
     const renderItem = useCallback(
-        ({item}) => {
+        ({item}: { item: { id: number; name: string } }) => {
             const isSelected = filterType === "generations" 
                     ? selectedGeneration.some((gen) => gen.id === item.id)
                     : selectedTypes.some((type) => type.id === item.id);

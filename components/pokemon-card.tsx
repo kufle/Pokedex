@@ -2,23 +2,25 @@ import { formatPokemonId } from '@/helpers/pokemon';
 import { colors, colorsTag } from '@/utils/colors';
 import { snakeCaseToTitleCase } from '@/utils/string'
 import React from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import ImgPokeball from '@/assets/images/pokeball.png';
+import { Image, ImageBackground, ImageSourcePropType, StyleSheet, Text, View } from 'react-native'
+import ImgPokeball from "../assets/images/pokeball.png";
 import Tag from './tag';
 
 interface Props {
     id: string;
     name: string;
     pokemon_v2_pokemons: {
-        pokemon_v2_pokemontypes: {
-            pokemon_v2_type: {
-                name: string
-            }
-        }[]
-    }[]
+      pokemon_v2_pokemontypes: {
+        pokemon_v2_type: {
+          name: string;
+        };
+      }[];
+    }[];
 }
 
 type ColorType = keyof typeof colors;
+
+const pokeballSource: ImageSourcePropType = ImgPokeball as ImageSourcePropType;
 
 const PNG_IMAGE_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
 
@@ -34,7 +36,7 @@ const PokemonCard = ({id, name, pokemon_v2_pokemons}: Props) => {
                 <ImageBackground
                     resizeMode="contain"
                     style={{width: 100, height: 100}}
-                    source={ImgPokeball}
+                    source={pokeballSource}
                 >
                     <Image
                         src={`${PNG_IMAGE_URL}/${id}.png`}
