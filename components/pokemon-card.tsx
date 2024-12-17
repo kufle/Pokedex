@@ -2,9 +2,10 @@ import { formatPokemonId } from '@/helpers/pokemon';
 import { colors, colorsTag } from '@/utils/colors';
 import { snakeCaseToTitleCase } from '@/utils/string'
 import React from 'react'
-import { Image, ImageBackground, ImageSourcePropType, StyleSheet, Text, View } from 'react-native'
+import { Image, ImageBackground, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import ImgPokeball from "../assets/images/pokeball.png";
 import Tag from './tag';
+import { useRouter } from 'expo-router';
 
 interface Props {
     id: string;
@@ -24,12 +25,19 @@ const pokeballSource: ImageSourcePropType = ImgPokeball as ImageSourcePropType;
 
 const PNG_IMAGE_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
 
-const PokemonCard = ({id, name, pokemon_v2_pokemons}: Props) => {
+const PokemonCard = React.memo(({id, name, pokemon_v2_pokemons}: Props) => {
+    const router = useRouter();
+
     const pokemonType = pokemon_v2_pokemons[0].pokemon_v2_pokemontypes.map((pokeType) => pokeType.pokemon_v2_type.name);
     const styles = createDynamicStyles(pokemonType[0] as ColorType);
 
+    const handlePress = () => {
+        console.log("ditekan")
+        router.push(`pokemon/${id}`, { animation: 'none' })
+    }
+
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={handlePress}>
             <Text style={styles.pokemonId}>#{formatPokemonId(id)}</Text>
             <Text style={styles.pokemonName}>{snakeCaseToTitleCase(name)}</Text>
             <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 8}}>
@@ -53,9 +61,9 @@ const PokemonCard = ({id, name, pokemon_v2_pokemons}: Props) => {
                     ))}
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
-}
+})
 
 export default PokemonCard;
 

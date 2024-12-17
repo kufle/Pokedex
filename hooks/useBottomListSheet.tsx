@@ -4,7 +4,7 @@ import { useCallback, useRef } from "react";
 const useBottomListSheet = () => {
     const sheetRef = useRef<BottomSheet>(null);
 
-    const handleSnapPress = useCallback((index) => {
+    const handleSnapPress = useCallback((index: number) => {
         sheetRef.current?.snapToIndex(index);
     }, []);
 

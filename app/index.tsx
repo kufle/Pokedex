@@ -16,7 +16,7 @@ const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
 
 const buildQuery = (appliedFilter: AppliedFilterType) => {
-  console.log(appliedFilter)
+  console.log("ini dipanggil berapa kali", appliedFilter)
   return gql`
     query Pokemons($name: String!, $offset: Int!, $limit: Int!, $generationId: [Int], $typeId: [Int]) {
       pokemon_v2_pokemonspecies(
@@ -159,7 +159,7 @@ export default function Index() {
   }
 
   const handleApplyFilters = () => {
-    console.log(selectedTypes)
+    console.log("selectedtypes",selectedTypes)
     setAppliedFilter({
       generationId: selectedGeneration.length > 0 ? selectedGeneration.map((item) => item.id) : [],
       typeId: selectedTypes.length > 0 ? selectedTypes.map((item) => item.id) : [],
@@ -190,9 +190,10 @@ export default function Index() {
         contentContainerStyle={{gap: 15, paddingBottom: 12}}
         columnWrapperStyle={{flex: 0.5, justifyContent: "space-between"}}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({item}) => <PokemonCard id={item.id.toString()} name={item.name} pokemon_v2_pokemons={item.pokemon_v2_pokemons || []} /> }
+        renderItem={({item}) => <PokemonCard key={item.id} id={item.id.toString()} name={item.name} pokemon_v2_pokemons={item.pokemon_v2_pokemons || []} /> }
         onEndReached={loadMoreData}
-        onEndReachedThreshold={0.5}
+        initialNumToRender={10}
+        maxToRenderPerBatch={6}
         ListFooterComponent={
           hasMore ? <ActivityIndicator /> : <Text>No more data</Text>
         }
