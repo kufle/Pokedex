@@ -13,7 +13,6 @@ import { pokemonTypes } from "@/data/pokemon-types";
 import { GenerationType, PokemonSpecies, TypesType } from "@/types/pokemonTypes";
 
 const LIMIT = 6;
-const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
 
 const buildQuery = (appliedFilter: AppliedFilterType) => {
   return gql`
