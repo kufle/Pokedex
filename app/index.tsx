@@ -16,7 +16,6 @@ const LIMIT = 6;
 const INITIAL_FILTER = { name: '', generationId: 0, typeId: 0 };
 
 const buildQuery = (appliedFilter: AppliedFilterType) => {
-  console.log("ini dipanggil berapa kali", appliedFilter)
   return gql`
     query Pokemons($name: String!, $offset: Int!, $limit: Int!, $generationId: [Int], $typeId: [Int]) {
       pokemon_v2_pokemonspecies(
