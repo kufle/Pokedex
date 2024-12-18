@@ -1,16 +1,15 @@
 import { gql, useQuery } from "@apollo/client";
 import PokemonCard from "@/components/pokemon-card";
 import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Filter from "@/components/filter";
-import BottomSheetList from "@/components/bottom-sheetlist";
-import useBottomListSheet from "@/hooks/useBottomListSheet";
 import { generations } from "@/data/generations";
 import { pokemonTypes } from "@/data/pokemon-types";
 import { GenerationType, PokemonSpecies, TypesType } from "@/types/pokemonTypes";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import FilterBottomSheet from "@/components/filter-bottomsheet";
 
 const LIMIT = 6;
 
@@ -64,46 +63,27 @@ export default function Index() {
     generationId: [],
     typeId: []
   });
-  // START
 
-  // render
-  const {sheetRef, handleSnapPress} = useBottomListSheet();
-
-  // renders
-	const renderBackdrop = useCallback(
-		(props: BottomSheetBackdropProps) => (
-			<BottomSheetBackdrop
-				{...props}
-				disappearsOnIndex={-1}
-				appearsOnIndex={0}
-			/>
-		),
-		[]
-	);
-
-  const snapPoints = useMemo(() => ["40%"], []);
+  const actionSheetRef = useRef<ActionSheetRef>(null);
 
   const memoizedFilterData = useMemo<{ id: number; name: string; }[]>(() => currentFilterData, [currentFilterData]);
-  // const memoizedCurrentFilter = useMemo(() => currentFilter, [currentFilter]);
-  // END
 
-  // Debounce logic
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchText(searchText);
-      setOffset(0); // Reset offset setiap kali search berubah
+      setOffset(0); // Reset offset when search input change
       setPokemons([]); // Clear current data
       setHasMore(true); // Reset pagination
     }, 500); // 500ms debounce time
 
     return () => {
-      clearTimeout(handler); // Clear timeout jika user mengetik sebelum 500ms
+      clearTimeout(handler); // Clear timeout when user type before 500ms
     };
   }, [searchText]);
 
   useEffect(() => {
     setDebouncedSearchText(searchText);
-    setOffset(0); // Reset offset setiap kali search berubah
+    setOffset(0); // Reset offset when search input change
     setPokemons([]); // Clear current data
     setHasMore(true); // Reset pagination
   }, [appliedFilter])
@@ -152,8 +132,7 @@ export default function Index() {
       setCurrentFilter("types");
       setCurrentFilterData(pokemonTypes);
     }
-    //console.log(currentFilter)
-    handleSnapPress(0);
+    actionSheetRef.current?.show();
   }
 
   const handleApplyFilters = () => {
@@ -162,7 +141,7 @@ export default function Index() {
       generationId: selectedGeneration.length > 0 ? selectedGeneration.map((item) => item.id) : [],
       typeId: selectedTypes.length > 0 ? selectedTypes.map((item) => item.id) : [],
     })
-    sheetRef.current?.close();
+    actionSheetRef.current?.hide();
   }
   
   return (
@@ -197,7 +176,7 @@ export default function Index() {
         }
       />
 
-      <BottomSheet
+      {/* <BottomSheet
         ref={sheetRef}
         index={-1}
         snapPoints={snapPoints}
@@ -221,7 +200,23 @@ export default function Index() {
           selectedTypes={selectedTypes}
           setSelectedTypes={setSelectedTypes}
         />
-      </BottomSheet>
+      </BottomSheet> */}
+      <ActionSheet ref={actionSheetRef} containerStyle={{height: "40%"}}>
+        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
+          <Text style={{fontFamily: "poppinsBold", textAlign: "left"}}>Filter {currentFilter}</Text>
+          <TouchableOpacity onPress={handleApplyFilters} style={{paddingVertical: 0, paddingHorizontal: 15}}>
+              <Text style={{fontFamily: "poppinsBold", color: "black", textAlign: "right"}}>Apply</Text>
+          </TouchableOpacity>
+        </View>
+        <FilterBottomSheet 
+          data={memoizedFilterData} 
+          filterType={currentFilter}
+          selectedGeneration={selectedGeneration}
+          setSelectedGeneration={setSelectedGeneration}
+          selectedTypes={selectedTypes}
+          setSelectedTypes={setSelectedTypes}
+        />
+      </ActionSheet>
     </View>
     </GestureHandlerRootView>
   );
