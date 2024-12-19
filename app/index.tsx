@@ -91,8 +91,6 @@ export default function Index() {
   const {loading, data, error, fetchMore} = useQuery(buildQuery(appliedFilter), {
     variables: {name: `%${debouncedSearchText}%`, offset: offset, limit: LIMIT, generationId: appliedFilter.generationId, typeId: appliedFilter.typeId},
     onCompleted: (data) => {
-      console.log("Di fetch")
-      //console.log(data)
       setPokemons((prev) => {
         const merged = [...prev, ...data.pokemon_v2_pokemonspecies];
         const unique = Array.from(new Map(merged.map((item) => [item.id, item])).values());
@@ -160,6 +158,7 @@ export default function Index() {
         </View>
        {/*  */}
       </View>
+      
       <FlatList
         numColumns={2}
         showsVerticalScrollIndicator={false}
@@ -176,31 +175,6 @@ export default function Index() {
         }
       />
 
-      {/* <BottomSheet
-        ref={sheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enableDynamicSizing={false}
-        enablePanDownToClose={true}
-        backdropComponent={renderBackdrop}
-        animateOnMount={false}
-      >
-        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
-          <Text style={{fontFamily: "poppinsBold", textAlign: "left"}}>Filter {currentFilter}</Text>
-          <TouchableOpacity onPress={handleApplyFilters} style={{paddingVertical: 0, paddingHorizontal: 15}}>
-              <Text style={{fontFamily: "poppinsBold", color: "black", textAlign: "right"}}>Apply</Text>
-          </TouchableOpacity>
-        </View>
-        <BottomSheetList 
-          key={currentFilter}
-          data={memoizedFilterData} 
-          filterType={currentFilter}
-          selectedGeneration={selectedGeneration}
-          setSelectedGeneration={setSelectedGeneration}
-          selectedTypes={selectedTypes}
-          setSelectedTypes={setSelectedTypes}
-        />
-      </BottomSheet> */}
       <ActionSheet ref={actionSheetRef} containerStyle={{height: "40%"}}>
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
           <Text style={{fontFamily: "poppinsBold", textAlign: "left"}}>Filter {currentFilter}</Text>
