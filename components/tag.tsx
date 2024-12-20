@@ -11,10 +11,9 @@ interface Props {
 function Tag({pokeType}: Props) {
     const styles = createDynamicStyles(pokeType as ColorType);
     return (
-        
-            <View style={styles.pokemonTag}>
-                <Text style={styles.pokemonType}>{pokeType}</Text>
-            </View>
+        <View style={styles.pokemonTag}>
+            <Text style={styles.pokemonType}>{pokeType}</Text>
+        </View>
     )
 }
 

@@ -32,8 +32,7 @@ const PokemonCard = React.memo(({id, name, pokemon_v2_pokemons}: Props) => {
     const styles = createDynamicStyles(pokemonType[0] as ColorType);
 
     const handlePress = () => {
-        console.log("ditekan")
-        router.push(`pokemon/${id}`, { animation: 'none' })
+        router.push({pathname: '/pokemon/[id]', params: {id, pokemonType: pokemonType, name: name}});
     }
 
     return (

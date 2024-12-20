@@ -28,7 +28,7 @@ export default function RootLayout() {
 
   return (
     <ApolloProvider client={client}>
-      <Stack>
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
     </ApolloProvider>
