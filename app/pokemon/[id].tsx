@@ -1,12 +1,12 @@
 import { useLocalSearchParams } from 'expo-router'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Dimensions, Image, ImageBackground, ImageSourcePropType, StyleSheet, Text, View } from 'react-native'
 import ImgPokeball from "../../assets/images/pokeball.png";
 import { colors } from '@/utils/colors';
 import { formatPokemonId } from '@/helpers/pokemon';
 import { snakeCaseToTitleCase } from '@/utils/string';
 import Tag from '@/components/tag';
-import { pokemonTypes } from './../../data/pokemon-types';
+import PokemonTabView from '@/components/PokemonTabView';
 
 type ColorType = keyof typeof colors;
 
@@ -16,17 +16,18 @@ const PNG_IMAGE_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/
 
 function Pokemon() {
 	const { id, pokemonType, name } = useLocalSearchParams<{ id: string; name: string, pokemonType: ColorType }>();
-	const pokemonArrayType: ColorType[] = pokemonType.split(",") as ColorType[];
+	const pokemonArrayType: ColorType[] = useMemo(() => pokemonType.split(",") as ColorType[], [pokemonType]);
+	
 	return (
 		<View style={{flex: 1, backgroundColor: "red"}}>
 			<View style={[styles.imageContainer, { backgroundColor: colors[pokemonArrayType[0]] || colors.undefined }]}>
 				<View style={{flexDirection: "column", justifyContent: "space-between", flex: 1}}>
-					<View style={{backgroundColor:"red", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start"}}>
+					<View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", paddingHorizontal: 16, paddingTop: 10}}>
 						<View>
-							<Text style={{textAlign: "left", fontSize: 20, fontFamily: "poppinsBold", color: "#FFFFFF"}}>{snakeCaseToTitleCase(name)}</Text>
-							<View style={{flexDirection: "row"}}>
+							<Text style={{textAlign: "left", fontSize: 20, fontFamily: "poppinsBold", color: "#FFFFFF", marginBottom: 5}}>{snakeCaseToTitleCase(name)}</Text>
+							<View style={{flexDirection: "row", marginHorizontal: -5}}>
 								{pokemonArrayType.map((pokeType) => (
-									<Tag key={pokeType} pokeType={pokeType} />
+									<Tag key={pokeType} pokeType={pokeType} hasIcon style={styles.tag} />
 								))}
 							</View>
 						</View>
@@ -44,7 +45,7 @@ function Pokemon() {
 				</View>
 			</View>
 			<View style={styles.descriptionContainer}>
-				<Text>Hello</Text>
+				<PokemonTabView id={id} />
 			</View>
 		</View>
 	)
@@ -54,15 +55,14 @@ export default Pokemon
 
 const styles = StyleSheet.create({
 	imageContainer: {
-		height: height * 0.33,
+		height: height * 0.35,
 	},
 	imageBackground: {
-		width: 160, 
-		height: 160, 
+		width: 150, 
+		height: 150, 
 		flexDirection: "column", 
 		alignItems: "center", 
 		justifyContent: "flex-end",
-		backgroundColor: "red",
 	},
 	descriptionContainer: {
 		backgroundColor: "#FFFFFF",
@@ -71,6 +71,12 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 20,
 		borderTopLeftRadius: 20,
 		paddingHorizontal: 16,
-		paddingTop: 26
+		paddingTop: 10
+	},
+	tag: {
+		paddingHorizontal: 15, 
+		paddingVertical: 6, 
+		borderRadius: 60, 
+		marginHorizontal: 5
 	}
 })

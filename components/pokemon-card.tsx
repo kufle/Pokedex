@@ -56,7 +56,7 @@ const PokemonCard = React.memo(({id, name, pokemon_v2_pokemons}: Props) => {
                 <Text style={styles.pokemonTypeTitle}>{pokemonType.length > 1 ? "Types:" : "Type:"}</Text>
                 <View style={styles.row}>
                     {pokemonType.map((pokeType) => (
-                        <Tag key={pokeType} pokeType={pokeType}/>
+                        <Tag key={pokeType} pokeType={pokeType} hasIcon={false} style={styles.icon}/>
                     ))}
                 </View>
             </View>
@@ -109,6 +109,12 @@ const createDynamicStyles = (type: ColorType) => {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
+        },
+        icon: {
+            paddingHorizontal: 10, 
+            paddingVertical: 2, 
+            marginTop: 8, 
+            marginHorizontal: 3
         }
     });
 }

@@ -17,14 +17,17 @@ import Psychic from "../assets/images/icons/Psychic.svg";
 import Rock from "../assets/images/icons/Rock.svg";
 import Steel from "../assets/images/icons/Steel.svg";
 import Water from "../assets/images/icons/Water.svg";
+import { StyleProp, View, ViewStyle } from 'react-native';
 
 interface Props {
     height: number;
     width: number;
     type: string;
+    style?: StyleProp<ViewStyle>;
 }
 
-function Icon({height = 24, width = 24, type}: Props) {
+function Icon({height = 24, width = 24, type, style}: Props) {
+    console.log(type)
     let RenderIcon;
     switch (type) {
         case 'bug':
@@ -85,7 +88,9 @@ function Icon({height = 24, width = 24, type}: Props) {
             RenderIcon = Dark;
     }
     return (
-        <RenderIcon height={height} width={width} />
+        <View style={style}>
+            <RenderIcon height={height} width={width} />
+        </View>
     )
 }
 
