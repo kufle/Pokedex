@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router'
 import React, { useMemo } from 'react'
-import { Dimensions, Image, ImageBackground, ImageSourcePropType, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, ImageBackground, ImageSourcePropType, ScrollView, StyleSheet, Text, View } from 'react-native'
 import ImgPokeball from "../../assets/images/pokeball.png";
 import { colors } from '@/utils/colors';
 import { formatPokemonId } from '@/helpers/pokemon';
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		borderTopRightRadius: 20,
 		borderTopLeftRadius: 20,
-		paddingHorizontal: 16,
 		paddingTop: 10
 	},
 	tag: {

@@ -40,6 +40,16 @@ export const colorsTag = {
     rock: '#D4C294',
     steel: '#4C91B2',
     water: '#417D9A',
-  };
+};
 
+export const colorCommon = {
+  light: {
+    text: '#666666',
+    background: '#ffffff',
+    //tint: tintColorLight,
+    icon: '#687076',
+    tabIconDefault: '#687076',
+    //tabIconSelected: tintColorLight,
+  },
+}
 export const getColor = (type: keyof typeof colors) => colors[type] || colors.undefined;
