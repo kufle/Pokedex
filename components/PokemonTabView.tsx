@@ -1,7 +1,7 @@
 import { GET_POKEMON } from '@/apollo/queries/pokemonQueries';
 import { useQuery } from '@apollo/client';
 import React, { useMemo } from 'react'
-import { Dimensions, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view'
 import TextValue from './TextValue';
 import getPokemonGenderStats from '@/utils/getPokemonGenderStats';
@@ -12,6 +12,7 @@ import { colorCommon } from '@/utils/colors';
 import { globalStyles } from '@/utils/globalStyle';
 import { statisticShortName } from '@/utils/statisticShortName';
 import { getMinMaxStat } from '@/utils/getMinMaxStat';
+import PokemonTabStats from './PokemonTabStats';
 
 const { width } = Dimensions.get("window");
 
@@ -77,36 +78,7 @@ const FirstRoute = React.memo(({id, data}) => {
     )
 });
 
-const SecondRoute = React.memo(({id, data}) => {
-    const { 
-        pokemon_v2_pokemonstats
-    } = data.pokemon_v2_pokemonspecies[0].pokemon_v2_pokemons[0];
 
-    return (
-        <View style={{marginVertical: 15, paddingHorizontal: 16}}>
-            {pokemon_v2_pokemonstats.map((stat) => {
-                const {minStat, maxStat} = getMinMaxStat(stat.pokemon_v2_stat.name, stat.base_stat);
-                const percentageWidth = (stat.base_stat * 100) / 150
-                return (
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 5}}>
-                        <Text style={{textAlign: "left", width: width * 0.23, fontFamily: "poppins"}}>{statisticShortName(stat.pokemon_v2_stat.name)}</Text>
-                        <Text style={{textAlign: "right", width: width * 0.09, marginRight: 10}}>{stat.base_stat}</Text>
-                        <View style={{flexGrow: 1, backgroundColor: "#d3d3d3", height: 8, borderRadius: 5}}>
-                            <View style={{width: `${percentageWidth}%`, backgroundColor: "green", height: 8, borderRadius: 5}} />
-                        </View>
-                        <Text style={{textAlign: "right", width: width * 0.2}}>{minStat} - {maxStat}</Text>
-                    </View>
-                )
-            })}
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 5}}>
-                <Text style={{textAlign: "left", width: width * 0.23, fontFamily: "poppins"}}>Total</Text>
-                <Text style={{textAlign: "right", width: width * 0.09}}>{pokemon_v2_pokemonstats.reduce((total: number, stat: number) => total + stat.base_stat, 0)}</Text>
-                <View style={{flexGrow: 1}}></View>
-                <Text style={{textAlign: "right", width: width * 0.2, fontFamily: "poppins"}}>Min-Max</Text>
-            </View>
-        </View>
-    );
-});
 
 const ThirdRoute = React.memo(() => (
     <View style={{ flex: 1 }}>
@@ -152,7 +124,7 @@ function PokemonTabView({id}: {id: string}) {
                     case '1':
                         return <FirstRoute id={id} data={data} />;
                     case '2':
-                        return <SecondRoute id={id} data={data} />;
+                        return <PokemonTabStats id={id} data={data} />;
                     case '3':
                         return <ThirdRoute />;
                     default:

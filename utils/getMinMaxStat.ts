@@ -1,4 +1,4 @@
-export const getMinMaxStat = (type, val) => {
+export const getMinMaxStat = (type: string, val: number) => {
     const maxEV = 31;
     const maxIV = 63;
     const beneficialNature = 1.1;
