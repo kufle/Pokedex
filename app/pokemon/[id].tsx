@@ -7,12 +7,11 @@ import { formatPokemonId } from '@/helpers/pokemon';
 import { snakeCaseToTitleCase } from '@/utils/string';
 import Tag from '@/components/tag';
 import PokemonTabView from '@/components/PokemonTabView';
+import { PNG_IMAGE_URL } from '@/helpers/constant';
 
 type ColorType = keyof typeof colors;
 
 const { height } = Dimensions.get("window");
-
-const PNG_IMAGE_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
 
 function Pokemon() {
 	const { id, pokemonType, name } = useLocalSearchParams<{ id: string; name: string, pokemonType: ColorType }>();

@@ -13,6 +13,7 @@ import { globalStyles } from '@/utils/globalStyle';
 import { statisticShortName } from '@/utils/statisticShortName';
 import { getMinMaxStat } from '@/utils/getMinMaxStat';
 import PokemonTabStats from './PokemonTabStats';
+import PokemonTabEvolution from './PokemonTabEvolution';
 
 const { width } = Dimensions.get("window");
 
@@ -126,7 +127,7 @@ function PokemonTabView({id}: {id: string}) {
                     case '2':
                         return <PokemonTabStats id={id} data={data} />;
                     case '3':
-                        return <ThirdRoute />;
+                        return <PokemonTabEvolution id={id} data={data} />;
                     default:
                         return null;
                 }

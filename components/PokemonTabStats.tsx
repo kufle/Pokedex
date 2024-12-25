@@ -20,7 +20,7 @@ const PokemonTabStats = React.memo(({id, data}) => {
         <View style={{marginVertical: 15, paddingHorizontal: 16}}>
             <FlatList
                 data={pokemon_v2_pokemonstats}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item.pokemon_v2_stat.name}
                 renderItem={({ item }) => {
                     const {minStat, maxStat} = getMinMaxStat(item.pokemon_v2_stat.name, item.base_stat);
                     const percentageWidth = (item.base_stat * 100) / 150
@@ -46,8 +46,8 @@ const PokemonTabStats = React.memo(({id, data}) => {
                         <Text style={styles.sectionHeader}>Abilities</Text>
                         <View>
                             {pokemon_v2_pokemonabilities.map((ability, index) => (
-                                <View style={{marginBottom: 7}} key={index}>
-                                    <Text key={index} style={{fontFamily: "poppinsMedium", fontSize: 16, textAlign: "justify"}}>{snakeCaseToTitleCase(ability.pokemon_v2_ability.name)}</Text>
+                                <View style={{marginBottom: 7}} key={ability.pokemon_v2_ability.name}>
+                                    <Text style={{fontFamily: "poppinsMedium", fontSize: 16, textAlign: "justify"}}>{snakeCaseToTitleCase(ability.pokemon_v2_ability.name)}</Text>
                                     <Text style={globalStyles.paraghraph}>{ability.pokemon_v2_ability.pokemon_v2_abilityeffecttexts[0].short_effect}</Text>
                                 </View>
                             ))}
