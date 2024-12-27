@@ -19,6 +19,7 @@ const PokemonTabStats = React.memo(({id, data}) => {
     return (
         <View style={{marginVertical: 15, paddingHorizontal: 16}}>
             <FlatList
+                showsVerticalScrollIndicator={false}
                 data={pokemon_v2_pokemonstats}
                 keyExtractor={(item) => item.pokemon_v2_stat.name}
                 renderItem={({ item }) => {

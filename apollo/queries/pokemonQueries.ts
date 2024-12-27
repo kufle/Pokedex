@@ -10,7 +10,7 @@ export const GET_POKEMON = gql`query Pokemon($id: Int!) {
     pokemon_v2_pokemonhabitat {
       name
     }
-    pokemon_v2_pokemons {
+    pokemon_v2_pokemons(limit: 1) {
       height
       weight
       base_experience
@@ -43,9 +43,19 @@ export const GET_POKEMON = gql`query Pokemon($id: Int!) {
       flavor_text
     }
     pokemon_v2_evolutionchain {
-      pokemon_v2_pokemonspecies {
+      pokemon_v2_pokemonspecies(order_by: {order: asc}) {
         name
         id
+        evolves_from_species_id
+        pokemon_v2_pokemonevolutions {
+          min_level
+          pokemon_v2_item {
+            name
+            pokemon_v2_itemsprites {
+              sprites
+            }
+          }
+        }
       }
     }
     pokemon_v2_pokemonspeciesnames(where: {language_id: {_eq: 9}}) {

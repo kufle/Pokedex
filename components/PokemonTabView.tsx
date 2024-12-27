@@ -56,8 +56,8 @@ const FirstRoute = React.memo(({id, data}) => {
                 <View style={{marginVertical: 15, paddingHorizontal: 16}}>
                     <Text style={globalStyles.paraghraph}>{pokemon_v2_pokemonspeciesflavortexts[0].flavor_text.replace(/\n|\f/g, ' ')}</Text>
                     <Text style={styles.sectionHeader}>Pokédex data</Text>
-                    <TextValue label="Species" value={pokemon_v2_pokemonspeciesnames[0].genus} />
-                    <TextValue label="Habitat" value={snakeCaseToTitleCase(pokemon_v2_pokemonhabitat.name)} />
+                    <TextValue label="Species" value={pokemon_v2_pokemonspeciesnames[0]?.genus} />
+                    <TextValue label="Habitat" value={snakeCaseToTitleCase(pokemon_v2_pokemonhabitat?.name || "")} />
                     <TextValue label="Height" value={`${pokemonFormatted.heightInMeters} m (${pokemonFormatted.heightInFeet}) ft`} />
                     <TextValue label="Weight" value={`${pokemonFormatted.weightInKilograms} kg (${pokemonFormatted.weightInPounds}) lbs`} />
 
@@ -67,7 +67,7 @@ const FirstRoute = React.memo(({id, data}) => {
                     <TextValue label="Catch rate" value={capture_rate} />
                     <TextValue label="Base Friendship" value={base_happiness} />
                     <TextValue label="Base Exp." value={pokemon_v2_pokemons[0].base_experience} />
-                    <TextValue label="Growth Rate" value={snakeCaseToTitleCase(pokemon_v2_growthrate.name)} />
+                    <TextValue label="Growth Rate" value={snakeCaseToTitleCase(pokemon_v2_growthrate?.name)} />
                     <Gap height={10} />
                     <Text style={styles.sectionHeader}>Breeding</Text>
                     <TextValue label="Egg Groups" value={pokemonFormatted.eggGroup} />
