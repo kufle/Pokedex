@@ -1,11 +1,12 @@
 import { formatPokemonId } from '@/helpers/pokemon';
-import { colors, colorsTag } from '@/utils/colors';
+import { colors } from '@/utils/colors';
 import { snakeCaseToTitleCase } from '@/utils/string'
 import React from 'react'
 import { Image, ImageBackground, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import ImgPokeball from "../assets/images/pokeball.png";
-import Tag from './tag';
 import { useRouter } from 'expo-router';
+import Tag from "./Tag"
+import { fonts } from '@/utils/fonts';
 
 interface Props {
     id: string;
@@ -89,21 +90,21 @@ const createDynamicStyles = (type: ColorType) => {
             fontSize: 18, 
             fontWeight: '600',
             color: '#FFFFFF',
-            fontFamily: "poppinsBold",
+            fontFamily: fonts.primary.bold,
         },
         pokemonId: {
             fontSize: 14,
             color: '#FFFFFF',
             textAlign: 'right',
             fontWeight: "bold",
-            fontFamily: "poppinsMedium",
+            fontFamily: fonts.primary.medium,
         },
         pokemonTypeTitle: {
             textAlign: "center",
             fontSize: 14,
             color: '#FFFFFF',
             fontWeight: "bold",
-            fontFamily: "poppinsMedium",
+            fontFamily: fonts.primary.medium,
         },
         row: {
             flexDirection: "row",

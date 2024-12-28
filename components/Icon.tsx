@@ -27,7 +27,6 @@ interface Props {
 }
 
 function Icon({height = 24, width = 24, type, style}: Props) {
-    console.log(type)
     let RenderIcon;
     switch (type) {
         case 'bug':

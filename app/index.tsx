@@ -1,15 +1,16 @@
 import { gql, useQuery } from "@apollo/client";
-import PokemonCard from "@/components/pokemon-card";
+import PokemonCard from "@/components/PokemonCard";
 import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Filter from "@/components/filter";
 import { generations } from "@/data/generations";
 import { pokemonTypes } from "@/data/pokemon-types";
 import { GenerationType, PokemonSpecies, TypesType } from "@/types/pokemonTypes";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
-import FilterBottomSheet from "@/components/filter-bottomsheet";
+import FilterBottomSheet from "@/components/FilterBottomSheet";
+import Filter from "@/components/filter";
+import { fonts } from "@/utils/fonts";
 
 const LIMIT = 6;
 
@@ -104,7 +105,6 @@ export default function Index() {
       fetchMore({
         variables: {name: `%${debouncedSearchText}%`, offset: offset + LIMIT, limit: LIMIT, generationId: appliedFilter.generationId, typeId: appliedFilter.typeId},
         updateQuery: (prevResult, { fetchMoreResult}) => {
-          console.log("refetch")
           if (!fetchMoreResult) return prevResult;
           if (fetchMoreResult.pokemon_v2_pokemonspecies.length < LIMIT) {
             setHasMore(false);
@@ -134,7 +134,6 @@ export default function Index() {
   }
 
   const handleApplyFilters = () => {
-    console.log("selectedtypes",selectedTypes)
     setAppliedFilter({
       generationId: selectedGeneration.length > 0 ? selectedGeneration.map((item) => item.id) : [],
       typeId: selectedTypes.length > 0 ? selectedTypes.map((item) => item.id) : [],
@@ -146,11 +145,11 @@ export default function Index() {
     <GestureHandlerRootView>
     <View style={{ flex: 1, paddingHorizontal: 16, flexDirection: "column", backgroundColor: "#FFFFFF"}}>
       <View style={{paddingBottom: 15}}>
-        <Text style={{fontSize: 28, fontFamily: "poppinsBold"}}>Pokédex</Text>
-        <Text style={{fontFamily: "poppins", fontSize: 14}}>Search for Pokémon by name.</Text>
+        <Text style={{fontSize: 28, fontFamily: fonts.primary.bold}}>Pokédex</Text>
+        <Text style={{fontFamily: fonts.primary.regular, fontSize: 14}}>Search for Pokémon by name.</Text>
         <View style={{flexDirection: "row", alignItems: "center", padding: 2, backgroundColor: "#f2f2f2", borderRadius: 10}}>
           <Ionicons name="search-outline" size={24} color="#ccc" style={{paddingHorizontal: 5}} />
-          <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 10, fontFamily: "poppins"}} onChangeText={(text) => setSearchText(text)} value={searchText} />
+          <TextInput placeholder="What Pokémon are you looking for?" style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 10, fontFamily: fonts.primary.regular}} onChangeText={(text) => setSearchText(text)} value={searchText} />
         </View>
         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10, gap: 10}}>
           <Filter text={appliedFilter.generationId.length > 0 ? selectedGeneration.map(item => item.name).join(", ") : "All generations"} handlePress={() => handleFilterPress("generations")} />
@@ -168,6 +167,7 @@ export default function Index() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({item}) => <PokemonCard key={item.id} id={item.id.toString()} name={item.name} pokemon_v2_pokemons={item.pokemon_v2_pokemons || []} /> }
         onEndReached={loadMoreData}
+        onEndReachedThreshold={0.1}
         initialNumToRender={10}
         maxToRenderPerBatch={6}
         ListFooterComponent={
@@ -177,9 +177,9 @@ export default function Index() {
 
       <ActionSheet ref={actionSheetRef} containerStyle={{height: "40%"}}>
         <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderColor: "#f2f2f2", paddingHorizontal: 20, paddingVertical: 10}}>
-          <Text style={{fontFamily: "poppinsBold", textAlign: "left"}}>Filter {currentFilter}</Text>
+          <Text style={{fontFamily: fonts.primary.bold, textAlign: "left"}}>Filter {currentFilter}</Text>
           <TouchableOpacity onPress={handleApplyFilters} style={{paddingVertical: 0, paddingHorizontal: 15}}>
-              <Text style={{fontFamily: "poppinsBold", color: "black", textAlign: "right"}}>Apply</Text>
+              <Text style={{fontFamily: fonts.primary.bold, color: "black", textAlign: "right"}}>Apply</Text>
           </TouchableOpacity>
         </View>
         <FilterBottomSheet 

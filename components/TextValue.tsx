@@ -1,3 +1,4 @@
+import { fonts } from '@/utils/fonts';
 import React from 'react'
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
@@ -22,14 +23,14 @@ export default TextValue;
 const styles = StyleSheet.create({
     texLabel:  {
         fontSize: 14, 
-        fontFamily: "poppins",
+        fontFamily: fonts.primary.regular,
         textAlign: "left", 
         width: width * 0.33,
         color: "#666666"
     },
     textValue: {
         fontSize: 14, 
-        fontFamily: "poppins",
+        fontFamily: fonts.primary.regular,
         textAlign: "left", 
         flex: 1,
         color: "#666666"

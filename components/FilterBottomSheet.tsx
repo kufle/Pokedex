@@ -1,4 +1,5 @@
 import { GenerationType, TypesType } from '@/types/pokemonTypes';
+import { fonts } from '@/utils/fonts';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useMemo } from 'react'
 import { FlatList, Text, TouchableOpacity } from 'react-native';
@@ -41,7 +42,7 @@ const FilterBottomSheet =  React.memo(({ data, filterType, selectedGeneration, s
                     : selectedTypes.some((type) => type.id === item.id);
             return (
                 <TouchableOpacity style={{paddingHorizontal: 20, paddingVertical: 10, flexDirection: "row"}} onPress={() => handlePress(item)}>
-                    <Text style={{fontFamily: "poppins", textAlign: "left", marginRight: 5}}>{item.name}</Text>
+                    <Text style={{fontFamily: fonts.primary.regular, textAlign: "left", marginRight: 5}}>{item.name}</Text>
                     {isSelected && (<Ionicons name="checkmark" size={20} color="green" />)}
                 </TouchableOpacity>
             )

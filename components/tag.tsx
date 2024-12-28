@@ -2,6 +2,7 @@ import { colorsTag } from '@/utils/colors';
 import React from 'react'
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import Icon from './Icon';
+import { fonts } from '@/utils/fonts';
 
 type ColorType = keyof typeof colorsTag;
 
@@ -30,7 +31,7 @@ const createDynamicStyles = (type: ColorType) => {
             fontSize: 12,
             textTransform: "capitalize",
             color: '#FFFFFF',
-            fontFamily: "poppins",
+            fontFamily: fonts.primary.regular,
         },
         pokemonTag: {
             backgroundColor: colorsTag[type],
