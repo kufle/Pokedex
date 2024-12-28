@@ -46,6 +46,7 @@ To run this app, make sure you have Expo CLI installed. Follow these steps:
 ## Credits
 
 This app fetches Pokémon data from [PokeAPI](https://pokeapi.co/), which provides comprehensive information about Pokémon, types, stats, and more.
+
 Icons for Pokémon types are provided by [Flavio Farias](https://www.behance.net/flaviofpsj) on Behance.
 
 ## License
