@@ -4,7 +4,7 @@
 - Search for Pokémon by name.
 - View detailed information about each Pokémon, including types, abilities, and stats.
 
-# Preview
+## Preview
 
 ![App screenshot](./.readme-static/pokedex.png)
 
