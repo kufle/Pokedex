@@ -15,7 +15,7 @@ To run this app, make sure you have Expo CLI installed. Follow these steps:
 1. Clone this repository:
 
     ```bash
-    git clone https://github.com/username/pokedex-app.git
+    git clone https://github.com/kufle/Pokedex.git
     ```
 
 2. Navigate to the project directory:
