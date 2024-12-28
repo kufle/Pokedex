@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/pokeball-splash.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.irawandev.my.id.pokemonwiki"
@@ -21,7 +21,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/pokeball-splash.png"
     },
     "plugins": [
       "expo-router",

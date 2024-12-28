@@ -1,4 +1,34 @@
+import { AppliedFilterType } from "@/types/pokemonTypes";
 import { gql } from "@apollo/client";
+
+export const buildPokemonQuery = (appliedFilter: AppliedFilterType) => gql`
+  query Pokemons($name: String!, $offset: Int!, $limit: Int!, $generationId: [Int], $typeId: [Int]) {
+    pokemon_v2_pokemonspecies(
+      order_by: { id: asc }
+      offset: $offset
+      where: {
+        name: { _ilike: $name },
+        ${appliedFilter.generationId && appliedFilter.generationId.length > 0 ? `generation_id: { _in: $generationId },` : ''}
+        ${
+          appliedFilter.typeId && appliedFilter.typeId.length > 0
+            ? `pokemon_v2_pokemons: { pokemon_v2_pokemontypes: { type_id: { _in: $typeId } } }`
+            : ''
+        }
+      }
+      limit: $limit
+    ) {
+      id
+      name
+      pokemon_v2_pokemons {
+        pokemon_v2_pokemontypes {
+          pokemon_v2_type {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
 
 export const GET_POKEMON = gql`query Pokemon($id: Int!) {
   pokemon_v2_pokemonspecies(where: {id: {_eq: $id}}) {

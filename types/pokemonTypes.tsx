@@ -25,3 +25,8 @@ export interface TypesType {
     id: number;
     name: string;
 }
+
+export interface AppliedFilterType {
+  generationId: number[];
+  typeId: number[];
+}
