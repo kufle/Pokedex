@@ -5,8 +5,8 @@ import React from 'react'
 import { Image, ImageBackground, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import ImgPokeball from "../assets/images/pokeball.png";
 import { useRouter } from 'expo-router';
-import Tag from "./Tag"
 import { fonts } from '@/utils/fonts';
+import Tag from './Tag';
 
 interface Props {
     id: string;
