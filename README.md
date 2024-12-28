@@ -1,3 +1,7 @@
+# Pokedex App - React Native Expo
+
+This is a Pokedex app built with React Native Expo.
+
 ## Features
 
 - Display a list of Pokémon with their names and images.
