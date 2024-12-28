@@ -9,8 +9,8 @@ import { pokemonTypes } from "@/data/pokemon-types";
 import { GenerationType, PokemonSpecies, TypesType } from "@/types/pokemonTypes";
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import FilterBottomSheet from "@/components/FilterBottomSheet";
-import Filter from "@/components/filter";
 import { fonts } from "@/utils/fonts";
+import Filter from "@/components/Filter";
 
 const LIMIT = 6;
 
