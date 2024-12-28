@@ -21,7 +21,7 @@ To run this app, make sure you have Expo CLI installed. Follow these steps:
 2. Navigate to the project directory:
 
     ```bash
-    cd pokedex-app
+    cd Pokedex
     ```
 
 3. Install dependencies:
