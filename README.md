@@ -1,50 +1,54 @@
-# Welcome to your Expo app 👋
+## Features
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+- Display a list of Pokémon with their names and images.
+- Search for Pokémon by name.
+- View detailed information about each Pokémon, including types, abilities, and stats.
 
-## Get started
+# Preview
 
-1. Install dependencies
+![App screenshot](./.readme-static/pokedex.png)
 
-   ```bash
-   npm install
-   ```
+## Installation
 
-2. Start the app
+To run this app, make sure you have Expo CLI installed. Follow these steps:
 
-   ```bash
+1. Clone this repository:
+
+    ```bash
+    git clone https://github.com/username/pokedex-app.git
+    ```
+
+2. Navigate to the project directory:
+
+    ```bash
+    cd pokedex-app
+    ```
+
+3. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+4. Run the app with Expo:
+
+    ```bash
     npx expo start
-   ```
+    ```
 
-In the output, you'll find options to open the app in a
+    Follow the instructions to open the app on your Android/iOS device or emulator.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Technologies Used
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- React Native Expo
+- GraphQL (for fetching data from PokeAPI)
 
-## Get a fresh project
+## Credits
 
-When you're ready, run:
+This app fetches Pokémon data from [PokeAPI](https://pokeapi.co/), which provides comprehensive information about Pokémon, types, stats, and more.
+Icons for Pokémon types are provided by [Flavio Farias](https://www.behance.net/flaviofpsj) on Behance.
 
-```bash
-npm run reset-project
-```
+## License
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Feel free to fork this project and improve it. Give a ⭐️ if you like this project!
+Made with ❤️ by Irawan 👋🏻 [Get in touch!](https://irawandev.my.id)
