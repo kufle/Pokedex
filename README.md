@@ -51,4 +51,5 @@ Icons for Pokémon types are provided by [Flavio Farias](https://www.behance.net
 ## License
 
 Feel free to fork this project and improve it. Give a ⭐️ if you like this project!
+
 Made with ❤️ by Irawan 👋🏻 [Get in touch!](https://irawandev.my.id)
