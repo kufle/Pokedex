@@ -41,7 +41,7 @@ To run this app, make sure you have Expo CLI installed. Follow these steps:
 ## Technologies Used
 
 - React Native Expo
-- GraphQL (for fetching data from PokeAPI)
+- Apollo Client (for GraphQL data fetching from PokeAPI)
 
 ## Credits
 
