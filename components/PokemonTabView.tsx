@@ -20,7 +20,7 @@ type State = NavigationState<Route>;
 const routes = [
     { key: '1', title: 'About' },
     { key: '2', title: 'Stats' },
-    { key: '3', title: 'Evolutions' },
+    { key: '3', title: 'Evolution' },
 ];
 
 const renderTab = (props: SceneRendererProps & { navigationState: State }) => {  
